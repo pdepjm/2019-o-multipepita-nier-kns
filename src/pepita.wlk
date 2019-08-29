@@ -1,6 +1,5 @@
 object pepita {
-	var energia = 0
-	var distanciaRecorrida = 0
+	var energia = 100
 
 	method estaCansada() {
 		return energia < 50
@@ -15,13 +14,13 @@ object pepita {
 	}
 	
 	method estaFeliz() {
-		return energia > 500 && energia < 1000
+		return energia.between(500, 1000)
 	}
 	
 	method cuantoQuiereVolar() {
 		var kmVuelo = energia / 5
 		
-		if(energia >= 300 && energia <= 400)
+		if(energia.between(300, 400))
 			kmVuelo += 10
 		if(energia%20==0)
 			kmVuelo += 15
@@ -29,12 +28,19 @@ object pepita {
 		return kmVuelo
 	}
 	
-	method salirAComer(lugar, comida) {
-		distanciaRecorrida += lugar.distanciaKmACasa()
-		energia = energia + comida.energiaQueOtorga()
-		distanciaRecorrida += lugar.distanciaKmACasa()
+	method salirAComer() {
+		var kmHastaDeposito = 5
+		self.vola(kmHastaDeposito)
+		self.come(alpiste)
+		self.vola(kmHastaDeposito)
 	}
 	
+	method haceLoQueQuieras() {
+		if (self.estaCansada())
+			self.come(alpiste)
+		if (self.estaFeliz())
+			self.vola(8)
+	}
 }
 
 object alpiste {
@@ -47,6 +53,56 @@ object alpiste {
 	method gramos(nuevosGramos) {
 		gramos = nuevosGramos
 	}	
+}
+
+object roque {
+	var energia = 0
+
+	method estaCansada() {
+		return energia < 50
+	}
+
+	method vola(kms) {
+		energia -= 10 + kms
+	}
+
+	method come(comida) {
+		energia = energia + comida.energiaQueOtorga()
+	}
+	
+	method estaFeliz() {
+		return energia.between(500, 1000)
+	}
+	
+	method cuantoQuiereVolar() {
+		var kmVuelo = energia / 5
+		
+		if(energia.between(300, 400))
+			kmVuelo += 10
+		if(energia%20==0)
+			kmVuelo += 15
+		
+		return kmVuelo
+	}
+	
+	method salirAComer() {
+		var kmHastaDeposito = 5
+		self.vola(kmHastaDeposito)
+		self.come(alpiste)
+		self.vola(kmHastaDeposito)
+	}
+	method haceLoQueQuieras() {
+		if (self.estaCansada())
+			self.come(alpiste)
+		if (self.estaFeliz())
+			self.vola(8)
+	}
+	method entrenar(alguien) {
+		alguien.vola(10)
+		alguien.come(alpiste)
+		alguien.vola(5)
+		self.haceLoQueQuieras()
+	}
 }
 
 object manzana {
@@ -108,8 +164,3 @@ object canelones {
 	}
 }
 
-object depositoDeAlpiste {
-	method distanciaKmACasa() {
-		return 5
-	}
-}
